@@ -14,6 +14,7 @@ library(primer.data)
 library(tidymodels)
 library(broom)
 library(gt)
+library(marginaleffects)
 ```
 Immigration attitudes among voters remain a contentious political issue, with exposure to different groups potentially shaping public opinion on immigration policy. Using data from a 2016 experiment conducted on train platforms in Georgia with 115 registered voters, we examine whether exposure to Spanish-speakers causally affects attitudes toward immigration.One potential weakness of our model is that it assumes a linear relationship and no omitted variable bias, which may not hold if other unmeasured factors also influence immigration attitudes.
 We model attitudes toward immigration, measured on a continuous scale, as a linear function of whether or not the respondent was exposed to Spanish speakers on a train platform.
@@ -56,3 +57,32 @@ fit_att |>
   ) |>
   fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 2)
 ```
+
+
+```{r}
+#| label: plot-treatment-effect
+#| echo: false
+#| message: false
+#| warning: false
+
+library(ggplot2)
+library(marginaleffects)
+
+# Get average comparison (treatment effect)
+avg_eff <- avg_comparisons(fit_att)
+
+# Plot it
+ggplot(avg_eff, aes(x = term, y = estimate)) +
+  geom_point(size = 4, color = "#0072B2") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, color = "#0072B2") +
+  labs(
+    title = "Effect of Exposure to Spanish Speakers on Immigration Attitudes",
+    subtitle = "Those exposed to Spanish speakers became more conservative by ~1.55 points, on average",
+    x = "Treatment",
+    y = "Estimated Effect on Immigration Attitude (att_end)",
+    caption = "Data: 2012 experiment by Ryan Enos on Boston commuters"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+On average, exposure to Spanish speakers increased conservative attitudes toward immigration by 1.55 points, with a 95% confidence interval ranging from 0.51 to 2.58, suggesting a meaningful and statistically significant effect.Given these concerns, a more conservative estimate might be that brief exposure to Spanish speakers makes voters somewhat more conservative on immigration, by approximately 0.8 to 2.2 units (with a wider confidence interval of ±0.7 to ±2.0), acknowledging that this effect may vary substantially across different voter populations and real-world contexts. This reflects greater uncertainty about both the magnitude and generalizability of the observed effect.
