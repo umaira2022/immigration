@@ -2,5 +2,15 @@
 title: "XX"
 author: "Umaira"
 format: html
+execute: 
+  echo: false
 ---
+
+
+```{r}
+#| message: false
+library(tidyverse)
+library(primer.data)
+```
+Immigration attitudes among voters remain a contentious political issue, with exposure to different groups potentially shaping public opinion on immigration policy. Using data from a 2016 experiment conducted on train platforms in Georgia with 115 registered voters, we examine whether exposure to Spanish-speakers causally affects attitudes toward immigration.
 
