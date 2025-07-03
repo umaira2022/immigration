@@ -13,8 +13,10 @@ library(tidyverse)
 library(primer.data)
 library(tidymodels)
 library(broom)
+library(gt)
 ```
 Immigration attitudes among voters remain a contentious political issue, with exposure to different groups potentially shaping public opinion on immigration policy. Using data from a 2016 experiment conducted on train platforms in Georgia with 115 registered voters, we examine whether exposure to Spanish-speakers causally affects attitudes toward immigration.One potential weakness of our model is that it assumes a linear relationship and no omitted variable bias, which may not hold if other unmeasured factors also influence immigration attitudes.
+We model attitudes toward immigration, measured on a continuous scale, as a linear function of whether or not the respondent was exposed to Spanish speakers on a train platform.
 
 $$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n + \epsilon$$
 
@@ -30,4 +32,27 @@ $$
 #| cache: true
 fit_att <- linear_reg(engine = "lm") |>
   fit(att_end ~ treatment, data = trains)
+```
+
+
+```{r}
+#| label: tbl-fit-att
+#| echo: false
+#| message: false
+#| warning: false
+
+fit_att |>
+  tidy(conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high) |>
+  gt() |>
+  tab_header(
+    title = "Estimated Effect of Treatment on Attitudes"
+  ) |>
+  cols_label(
+    term = "Variable",
+    estimate = "Estimate",
+    conf.low = "Lower 95% CI",
+    conf.high = "Upper 95% CI"
+  ) |>
+  fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 2)
 ```
